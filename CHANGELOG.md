@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.7 - 2026-07-13
+
+- Replaced the inapplicable tracking disclosure with the faction membership requirement.
+
 ## 1.0.6 - 2026-07-13
 
 - Added a one-time, free seven-day subscription trial for new activations.
