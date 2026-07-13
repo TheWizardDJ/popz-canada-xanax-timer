@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.0 - 2026-07-13
+
+- Fixed the overlay update indicator comparing against a stale internal version.
+
 ## 1.0.10 - 2026-07-13
 
 - Fixed the collapsed right-edge tab remaining off-screen after overlay refreshes.
