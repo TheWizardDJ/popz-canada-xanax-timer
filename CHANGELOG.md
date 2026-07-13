@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.8 - 2026-07-13
+
+- Added a daily Greasy Fork version check and an overlay update action.
+
 ## 1.0.7 - 2026-07-13
 
 - Replaced the inapplicable tracking disclosure with the faction membership requirement.
