@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         -PopZ- Canada Xanax Flight Timer
 // @namespace    https://popz.world/
-// @version      1.0.7
+// @version      1.0.8
 // @description  Shows the recommended Canada departure time for the latest confirmed Xanax restock.
 // @author       TheWizardDJ
 // @license      Copyright TheWizardDJ
@@ -15,6 +15,7 @@
 // @grant        GM_xmlhttpRequest
 // @grant        GM_setClipboard
 // @connect      api.popz.world
+// @connect      greasyfork.org
 // @noframes
 // ==/UserScript==
 
@@ -22,6 +23,9 @@
   'use strict';
 
   const API = 'https://api.popz.world/xanax-timer';
+  const GREASY_FORK_SCRIPT_URL = 'https://greasyfork.org/en/scripts/586894-popz-canada-xanax-flight-timer';
+  const GREASY_FORK_METADATA_URL = 'https://greasyfork.org/en/scripts/586894.json';
+  const SCRIPT_VERSION = '1.0.8';
   const RECIPIENT_ID = '1800878';
   const DEFAULT_FLIGHT_MINUTES = 27;
 
@@ -29,6 +33,8 @@
   let detailOpen = false;
   let flightAlertEnabled = false;
   let collapsed = false;
+  let updateVersion = '';
+  let updateCheckInFlight = false;
 
   const get = (key, fallback) => GM_getValue(key, fallback);
   const set = (key, value) => GM_setValue(key, value);
@@ -87,6 +93,10 @@
       border-radius: 4px;
       padding: 6px;
       cursor: pointer;
+    }
+    #popz-xanax .update {
+      margin: 3px 0;
+      background: #c26b19;
     }
     #pzCollapse {
       position: absolute;
@@ -288,6 +298,42 @@
     return `${hours}h ${minutes}m ${seconds % 60}s`;
   }
 
+  function newerVersion(candidate, current) {
+    const candidateParts = String(candidate).split('.').map(part => Number(part) || 0);
+    const currentParts = String(current).split('.').map(part => Number(part) || 0);
+    const length = Math.max(candidateParts.length, currentParts.length);
+    for (let index = 0; index < length; index += 1) {
+      if ((candidateParts[index] || 0) !== (currentParts[index] || 0)) return (candidateParts[index] || 0) > (currentParts[index] || 0);
+    }
+    return false;
+  }
+
+  function checkForUpdate() {
+    if (updateCheckInFlight) return;
+    const lastChecked = Number(get('greasyfork_update_checked_at', 0));
+    const cachedVersion = get('greasyfork_update_version', '');
+    if (Date.now() - lastChecked < 86400_000) {
+      updateVersion = newerVersion(cachedVersion, SCRIPT_VERSION) ? cachedVersion : '';
+      return;
+    }
+    updateCheckInFlight = true;
+    GM_xmlhttpRequest({
+      method: 'GET',
+      url: GREASY_FORK_METADATA_URL,
+      onload: (response) => {
+        updateCheckInFlight = false;
+        try {
+          const latest = JSON.parse(response.responseText).version || '';
+          set('greasyfork_update_checked_at', Date.now());
+          set('greasyfork_update_version', latest);
+          updateVersion = newerVersion(latest, SCRIPT_VERSION) ? latest : '';
+          render();
+        } catch { /* Keep the current overlay when Greasy Fork metadata is unavailable. */ }
+      },
+      onerror: () => { updateCheckInFlight = false; }
+    });
+  }
+
   function renderActivation(body, detail) {
     flightAlert.classList.remove('active');
     detail.innerHTML = '';
@@ -335,6 +381,7 @@
     body.innerHTML = `
       <strong>${subscription.owner_access ? 'Owner access' : subscription.active ? 'Active' : 'Inactive'}</strong><br>
       Sub: ${subscription.owner_access ? 'Unrestricted' : remaining(subscription.remaining_seconds)}<br>
+      ${updateVersion ? `<button id="pzUpdate" class="update">Update available: ${updateVersion}</button><br>` : ''}
       ${restock ? `
         Leave in: ${countdown(leave)}
         <button id="pzBell" class="bell ${flightAlertEnabled ? 'enabled' : ''}" title="Toggle one-minute departure border">&#128276;</button><br>
@@ -365,6 +412,10 @@
       }
     });
     document.querySelector('#pzRefresh').addEventListener('click', refresh);
+    document.querySelector('#pzUpdate')?.addEventListener('click', (event) => {
+      event.stopPropagation();
+      window.open(GREASY_FORK_SCRIPT_URL, '_blank', 'noopener');
+    });
     document.querySelector('#pzPay').addEventListener('click', () => {
       GM_setClipboard(`Send 1 Xanax to ${RECIPIENT_ID} with message: Xanax Flight Timer`);
       location.href = 'https://www.torn.com/item.php#drugs';
@@ -386,6 +437,7 @@
   }
 
   refresh();
+  checkForUpdate();
   setInterval(refresh, 30000);
   setInterval(() => {
     const focusedId = document.activeElement?.id;
