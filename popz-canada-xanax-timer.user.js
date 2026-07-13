@@ -1,14 +1,14 @@
 // ==UserScript==
 // @name         -PopZ- Canada Xanax Flight Timer
 // @namespace    https://popz.world/
-// @version      1.0.6
+// @version      1.0.7
 // @description  Shows the recommended Canada departure time for the latest confirmed Xanax restock.
 // @author       TheWizardDJ
 // @license      Copyright TheWizardDJ
 // @homepageURL  https://github.com/TheWizardDJ/popz-canada-xanax-timer
 // @supportURL   https://github.com/TheWizardDJ/popz-canada-xanax-timer/issues
 // @antifeature  payment Requires one Xanax per week for active subscriber access.
-// @antifeature  tracking Stores player identity, faction eligibility, subscription status, and payment records.
+// @antifeature  membership Requires current membership in PopZ factions 36201 or 56889.
 // @match        https://www.torn.com/*
 // @grant        GM_getValue
 // @grant        GM_setValue
