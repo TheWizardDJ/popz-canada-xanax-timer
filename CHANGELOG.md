@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.10 - 2026-07-13
+
+- Fixed the collapsed right-edge tab remaining off-screen after overlay refreshes.
+
 ## 1.0.9 - 2026-07-13
 
 - Added an explicit settings button and reserved the title bar for moving the overlay.
