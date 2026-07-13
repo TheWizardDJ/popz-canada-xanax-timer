@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.0.9 - 2026-07-13
+
+- Added an explicit settings button and reserved the title bar for moving the overlay.
+
 ## 1.0.8 - 2026-07-13
 
 - Added a daily Greasy Fork version check and an overlay update action.
