@@ -8,7 +8,7 @@ Install the script from [Greasy Fork](https://greasyfork.org/) once the listing 
 
 ## Access and Subscription
 
-Access is available to members of PopZ factions `36201` and `56889`. Active access requires one Xanax per week, sent to Torn ID `1800878` with the exact message `Xanax Flight Timer`.
+Access is available to members of PopZ factions `36201` and `56889`. New subscribers receive their first seven days free. After that, active access requires one Xanax per week, sent to Torn ID `1800878` with the exact message `Xanax Flight Timer`.
 
 ## API Key and Data Use
 
