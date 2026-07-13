@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         -PopZ- Canada Xanax Flight Timer
 // @namespace    https://popz.world/
-// @version      1.0.8
+// @version      1.0.9
 // @description  Shows the recommended Canada departure time for the latest confirmed Xanax restock.
 // @author       TheWizardDJ
 // @license      Copyright TheWizardDJ
@@ -144,6 +144,14 @@
       cursor: grab;
       touch-action: none;
     }
+    #popz-xanax #pzSettings {
+      margin-left: auto;
+      min-width: 25px;
+      padding: 3px !important;
+      background: #1c343f;
+      font-size: 15px;
+      line-height: 1;
+    }
     #popz-xanax .top:active { cursor: grabbing; }
     #popz-xanax .body { padding: 0 9px 9px; line-height: 1.55; }
     #popz-xanax .detail {
@@ -186,7 +194,7 @@
   box.id = 'popz-xanax';
   box.innerHTML = `
     <button id="pzCollapse" title="Collapse timer to page edge">&raquo;</button>
-    <div class="top"><span>&#128138;</span><span>Canada Xanax Timer</span></div>
+    <div class="top"><span>&#128138;</span><span>Canada Xanax Timer</span><button id="pzSettings" title="Open timer settings" aria-label="Open timer settings">&#9881;</button></div>
     <div class="body">Connecting...</div>
     <div class="detail"></div>
   `;
@@ -240,6 +248,7 @@
   let dragged = false;
 
   header.addEventListener('pointerdown', (event) => {
+    if (event.target.closest('#pzSettings')) return;
     drag = { x: event.clientX, y: event.clientY, left: box.offsetLeft, top: box.offsetTop };
     dragged = false;
     header.setPointerCapture(event.pointerId);
@@ -261,11 +270,14 @@
     drag = null;
     if (moved) {
       set('overlay_position', { left: box.offsetLeft, top: box.offsetTop });
-    } else {
-      detailOpen = !detailOpen;
-      box.classList.toggle('open', detailOpen);
-      render();
     }
+  });
+
+  document.querySelector('#pzSettings').addEventListener('click', (event) => {
+    event.stopPropagation();
+    detailOpen = !detailOpen;
+    box.classList.toggle('open', detailOpen);
+    render();
   });
 
   async function activate(key) {
