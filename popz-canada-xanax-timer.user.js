@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         -PopZ- Canada Xanax Flight Timer
 // @namespace    https://popz.world/
-// @version      1.0.5
+// @version      1.0.6
 // @description  Shows the recommended Canada departure time for the latest confirmed Xanax restock.
 // @author       TheWizardDJ
 // @license      Copyright TheWizardDJ
@@ -298,7 +298,7 @@
       <a href="https://www.torn.com/preferences.php#tab=api?step=addNewKey&user=profile&title=EnrollXanaxFlightTimer" target="_blank" rel="noopener">Create profile key</a><br>
       <input id="pzApiKey" type="text" maxlength="16" autocomplete="off" placeholder="16-character API key"><br>
       <button id="pzActivate">Activate</button><br>
-      <small>Used once for player and faction verification, then discarded. Player and subscription status are stored. <a href="${API}/privacy.html" target="_blank" rel="noopener">Privacy</a></small>
+      <small>New subscribers receive a free 7-day trial. The key is used once for player and faction verification, then discarded. Player and subscription status are stored. <a href="${API}/privacy.html" target="_blank" rel="noopener">Privacy</a></small>
     `;
     document.querySelector('#pzActivate').addEventListener('click', () => activate(document.querySelector('#pzApiKey').value));
   }
