@@ -1,7 +1,7 @@
 // ==UserScript==
-// @name         PopZ Canada Xanax Flight Timer
+// @name         -PopZ- Canada Xanax Flight Timer
 // @namespace    https://popz.world/
-// @version      1.0.4
+// @version      1.0.5
 // @description  Shows the recommended Canada departure time for the latest confirmed Xanax restock.
 // @author       TheWizardDJ
 // @license      Copyright TheWizardDJ
