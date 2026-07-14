@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.1 - 2026-07-14
+
+- Added a travel agency shortcut beside the departure-alert bell.
+
 ## 1.1.0 - 2026-07-13
 
 - Fixed the overlay update indicator comparing against a stale internal version.

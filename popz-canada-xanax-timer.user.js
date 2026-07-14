@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         -PopZ- Canada Xanax Flight Timer
 // @namespace    https://popz.world/
-// @version      1.1.0
+// @version      1.1.1
 // @description  Shows the recommended Canada departure time for the latest confirmed Xanax restock.
 // @author       TheWizardDJ
 // @license      Copyright TheWizardDJ
@@ -25,7 +25,7 @@
   const API = 'https://api.popz.world/xanax-timer';
   const GREASY_FORK_SCRIPT_URL = 'https://greasyfork.org/en/scripts/586894-popz-canada-xanax-flight-timer';
   const GREASY_FORK_METADATA_URL = 'https://greasyfork.org/en/scripts/586894.json';
-  const SCRIPT_VERSION = '1.1.0';
+  const SCRIPT_VERSION = '1.1.1';
   const RECIPIENT_ID = '1800878';
   const DEFAULT_FLIGHT_MINUTES = 27;
 
@@ -134,6 +134,17 @@
       background: #ef4444;
       transform: rotate(-35deg);
     }
+    #popz-xanax .travel-link {
+      display: inline-block;
+      margin-left: 4px;
+      padding: 1px 4px;
+      color: #edf6fb;
+      border: 1px solid #557786;
+      border-radius: 3px;
+      line-height: 1.2;
+      text-decoration: none;
+    }
+    #popz-xanax .travel-link:hover { color: #a9e7ff; border-color: #a9e7ff; }
     #popz-xanax .top {
       display: flex;
       gap: 8px;
@@ -396,7 +407,7 @@
       ${updateVersion ? `<button id="pzUpdate" class="update">Update available: ${updateVersion}</button><br>` : ''}
       ${restock ? `
         Leave in: ${countdown(leave)}
-        <button id="pzBell" class="bell ${flightAlertEnabled ? 'enabled' : ''}" title="Toggle one-minute departure border">&#128276;</button><br>
+        <button id="pzBell" class="bell ${flightAlertEnabled ? 'enabled' : ''}" title="Toggle one-minute departure border">&#128276;</button><a class="travel-link" href="https://www.torn.com/travelagency.php" title="Open travel agency" aria-label="Open travel agency">&#9992;</a><br>
         Leave: ${leave.toLocaleTimeString()}<br>
         Restock in: ${countdown(restock.at)}<br>
         Restock: ${new Date(restock.at).toLocaleTimeString()} | $${Number(restock.price).toLocaleString()}
