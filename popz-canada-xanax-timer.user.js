@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         -PopZ- Canada Xanax Flight Timer
 // @namespace    https://popz.world/
-// @version      1.1.4
+// @version      1.1.5
 // @description  Shows the recommended Canada departure time for the latest confirmed Xanax restock.
 // @author       TheWizardDJ
 // @license      Copyright TheWizardDJ
@@ -31,13 +31,14 @@
   const API = 'https://api.popz.world/xanax-timer';
   const GREASY_FORK_SCRIPT_URL = 'https://greasyfork.org/en/scripts/586894-popz-canada-xanax-flight-timer';
   const GREASY_FORK_METADATA_URL = 'https://greasyfork.org/en/scripts/586894.json';
-  const SCRIPT_VERSION = '1.1.4';
+  const SCRIPT_VERSION = '1.1.5';
   const RECIPIENT_ID = '1800878';
   const DEFAULT_FLIGHT_MINUTES = 27;
 
   let status;
   let detailOpen = false;
   let flightAlertEnabled = false;
+  let moneyReminderEnabled = true;
   let collapsed = false;
   let updateVersion = '';
   let updateCheckInFlight = false;
@@ -122,6 +123,7 @@
       border-radius: 4px 0 0 4px !important;
     }
     #popz-xanax .bell,
+    #popz-xanax .money,
     #popz-xanax .travel-link {
       position: relative;
       display: inline-flex;
@@ -139,8 +141,11 @@
       border-radius: 4px;
     }
     #popz-xanax .bell.enabled { color: #ffd166; border-color: #ffd166; }
-    #popz-xanax .bell:not(.enabled) { opacity: .65; }
-    #popz-xanax .bell:not(.enabled)::after {
+    #popz-xanax .money.enabled { color: #88d498; border-color: #88d498; }
+    #popz-xanax .bell:not(.enabled),
+    #popz-xanax .money:not(.enabled) { opacity: .65; }
+    #popz-xanax .bell:not(.enabled)::after,
+    #popz-xanax .money:not(.enabled)::after {
       content: '';
       position: absolute;
       left: 2px;
@@ -203,6 +208,37 @@
       box-shadow: inset 0 0 24px #ef444499;
     }
     #popz-flight-alert.active { display: block; }
+    #popz-travel-money-notice {
+      position: fixed;
+      inset: 0;
+      z-index: 2147483647;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+      background: rgba(0, 0, 0, .72);
+    }
+    #popz-travel-money-notice .notice-dialog {
+      width: min(430px, 100%);
+      padding: 28px 24px;
+      border: 2px solid #ffd166;
+      border-radius: 8px;
+      background: #152028;
+      color: #fff;
+      box-shadow: 0 12px 36px #000b;
+      text-align: center;
+      font: bold 28px Arial, sans-serif;
+    }
+    #popz-travel-money-notice button {
+      margin-top: 22px;
+      padding: 10px 18px;
+      border: 0;
+      border-radius: 5px;
+      background: #287ca0;
+      color: #fff;
+      font: bold 16px Arial, sans-serif;
+      cursor: pointer;
+    }
   `;
   document.head.append(style);
 
@@ -210,6 +246,7 @@
   flightAlert.id = 'popz-flight-alert';
   document.body.append(flightAlert);
   flightAlertEnabled = Boolean(get('flight_alert_enabled', false));
+  moneyReminderEnabled = Boolean(get('money_reminder_enabled', true));
 
   const box = document.createElement('aside');
   box.id = 'popz-xanax';
@@ -220,6 +257,20 @@
     <div class="detail"></div>
   `;
   document.body.append(box);
+
+  function showTravelMoneyNotice() {
+    if (location.pathname !== '/travelagency.php' || !get('money_reminder_enabled', true)) return;
+
+    const notice = document.createElement('div');
+    notice.id = 'popz-travel-money-notice';
+    notice.setAttribute('role', 'dialog');
+    notice.setAttribute('aria-modal', 'true');
+    notice.innerHTML = '<div class="notice-dialog">Do you have your $$$?<br><button type="button">I am ready</button></div>';
+    notice.querySelector('button').addEventListener('click', () => notice.remove());
+    document.body.append(notice);
+  }
+
+  showTravelMoneyNotice();
 
   // Legacy script installs can still inject their old overlay after this one loads.
   // Keep this page to a single timer instance until that old entry is removed.
@@ -246,7 +297,7 @@
     box.classList.toggle('edge-right', edge === 'right');
     if (collapsed) {
       box.style.top = `${Math.max(0, Math.min(window.innerHeight - box.offsetHeight, position.top))}px`;
-      box.style.left = edge === 'right' ? `${window.innerWidth - 22}px` : `${-box.offsetWidth + 22}px`;
+      box.style.left = edge === 'right' ? `${window.innerWidth}px` : `${-box.offsetWidth}px`;
     } else {
       box.style.left = `${position.left}px`;
       box.style.top = `${position.top}px`;
@@ -429,7 +480,7 @@
       ${updateVersion ? `<button id="pzUpdate" class="update">Update available: ${updateVersion}</button><br>` : ''}
       ${restock ? `
         Leave in: ${leavePending ? 'Pending' : countdown(leave)}
-        <button id="pzBell" class="bell ${flightAlertEnabled ? 'enabled' : ''}" title="Toggle one-minute departure border">&#128276;</button><a class="travel-link" href="https://www.torn.com/travelagency.php" title="Open travel agency" aria-label="Open travel agency">&#9992;</a><br>
+        <button id="pzBell" class="bell ${flightAlertEnabled ? 'enabled' : ''}" title="Toggle one-minute departure border">&#128276;</button><button id="pzMoney" class="money ${moneyReminderEnabled ? 'enabled' : ''}" title="Toggle travel cash reminder">$</button><a class="travel-link" href="https://www.torn.com/travelagency.php" title="Open travel agency" aria-label="Open travel agency">&#9992;</a><br>
         Leave at: ${leavePending ? 'Pending' : `${leave.toLocaleTimeString()} (local)`}<br>
         Restock in: ${countdown(restock.at)}<br>
         Restock: ${new Date(restock.at).toLocaleTimeString()} | $${Number(restock.price).toLocaleString()}
@@ -446,6 +497,12 @@
       event.stopPropagation();
       flightAlertEnabled = !flightAlertEnabled;
       set('flight_alert_enabled', flightAlertEnabled);
+      render();
+    });
+    document.querySelector('#pzMoney')?.addEventListener('click', (event) => {
+      event.stopPropagation();
+      moneyReminderEnabled = !moneyReminderEnabled;
+      set('money_reminder_enabled', moneyReminderEnabled);
       render();
     });
     document.querySelector('#pzMins').addEventListener('change', (event) => {

@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.5 - 2026-07-14
+
+- Added a travel-page cash reminder with a persistent toggle.
+- Fully hid collapsed overlays, leaving only the expand tab visible.
+
 ## 1.1.4 - 2026-07-14
 
 - Prevented duplicate timer overlays from concurrent script installs.
