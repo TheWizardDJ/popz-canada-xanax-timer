@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         -PopZ- Canada Xanax Flight Timer
 // @namespace    https://popz.world/
-// @version      1.1.1
+// @version      1.1.2
 // @description  Shows the recommended Canada departure time for the latest confirmed Xanax restock.
 // @author       TheWizardDJ
 // @license      Copyright TheWizardDJ
@@ -25,7 +25,7 @@
   const API = 'https://api.popz.world/xanax-timer';
   const GREASY_FORK_SCRIPT_URL = 'https://greasyfork.org/en/scripts/586894-popz-canada-xanax-flight-timer';
   const GREASY_FORK_METADATA_URL = 'https://greasyfork.org/en/scripts/586894.json';
-  const SCRIPT_VERSION = '1.1.1';
+  const SCRIPT_VERSION = '1.1.2';
   const RECIPIENT_ID = '1800878';
   const DEFAULT_FLIGHT_MINUTES = 27;
 
@@ -387,6 +387,7 @@
     const flightMinutes = duration();
     const leave = restock ? new Date(new Date(restock.at).getTime() - flightMinutes * 60000) : null;
     const leaveSeconds = leave ? Math.floor((leave.getTime() - Date.now()) / 1000) : 0;
+    const leavePending = leave && Date.now() >= leave.getTime() + 60000;
 
     flightAlert.classList.toggle('active', Boolean(subscription.active && flightAlertEnabled && leaveSeconds > 0 && leaveSeconds <= 60));
 
@@ -406,9 +407,9 @@
       Sub: ${subscription.owner_access ? 'Unrestricted' : remaining(subscription.remaining_seconds)}<br>
       ${updateVersion ? `<button id="pzUpdate" class="update">Update available: ${updateVersion}</button><br>` : ''}
       ${restock ? `
-        Leave in: ${countdown(leave)}
+        Leave in: ${leavePending ? 'Pending' : countdown(leave)}
         <button id="pzBell" class="bell ${flightAlertEnabled ? 'enabled' : ''}" title="Toggle one-minute departure border">&#128276;</button><a class="travel-link" href="https://www.torn.com/travelagency.php" title="Open travel agency" aria-label="Open travel agency">&#9992;</a><br>
-        Leave: ${leave.toLocaleTimeString()}<br>
+        Leave at: ${leavePending ? 'Pending' : `${leave.toLocaleTimeString()} (local)`}<br>
         Restock in: ${countdown(restock.at)}<br>
         Restock: ${new Date(restock.at).toLocaleTimeString()} | $${Number(restock.price).toLocaleString()}
       ` : 'No confirmed restock yet'}

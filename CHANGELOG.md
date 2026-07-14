@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.2 - 2026-07-14
+
+- Labelled the local departure time and mark stale departure times as pending one minute after they pass.
+
 ## 1.1.1 - 2026-07-14
 
 - Added a travel agency shortcut beside the departure-alert bell.
