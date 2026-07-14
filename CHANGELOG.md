@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.3 - 2026-07-14
+
+- Matched the travel shortcut control size to the departure-alert bell.
+
 ## 1.1.2 - 2026-07-14
 
 - Labelled the local departure time and mark stale departure times as pending one minute after they pass.
