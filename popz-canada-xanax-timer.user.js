@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         -PopZ- Canada Xanax Flight Timer
 // @namespace    https://popz.world/
-// @version      1.1.6
+// @version      1.1.7
 // @description  Shows the recommended Canada departure time for the latest confirmed Xanax restock.
 // @author       TheWizardDJ
 // @license      Copyright TheWizardDJ
@@ -31,9 +31,10 @@
   const API = 'https://api.popz.world/xanax-timer';
   const GREASY_FORK_SCRIPT_URL = 'https://greasyfork.org/en/scripts/586894-popz-canada-xanax-flight-timer';
   const GREASY_FORK_METADATA_URL = 'https://greasyfork.org/en/scripts/586894.json';
-  const SCRIPT_VERSION = '1.1.6';
+  const SCRIPT_VERSION = '1.1.7';
   const RECIPIENT_ID = '1800878';
   const DEFAULT_FLIGHT_MINUTES = 27;
+  const DEPARTURE_BUFFER_SECONDS = 20;
 
   let status;
   let detailOpen = false;
@@ -260,14 +261,22 @@
   `;
   document.body.append(box);
 
-  function showTravelMoneyNotice() {
+  function isTravelPage() {
     const route = `${location.pathname}${location.search}${location.hash}`;
     const sid = new URLSearchParams(location.search).get('sid')?.toLowerCase();
-    const isTravelPage = /\/(?:travel|travelagency)\.php(?:[/?#]|$)/i.test(route)
+    return /\/(?:travel|travelagency)\.php(?:[/?#]|$)/i.test(route)
       || sid === 'travel'
       || sid === 'travelagency'
       || /(?:[?#&]sid=)(?:travel|travelagency)(?:[&#]|$)/i.test(route);
-    if (!isTravelPage || !get('money_reminder_enabled', true)) return;
+  }
+
+  function isCurrentlyFlying() {
+    const pageText = document.body?.innerText || '';
+    return /remaining flight time|you are currently (?:flying|traveling)|currently (?:flying|traveling)/i.test(pageText);
+  }
+
+  function showTravelMoneyNotice() {
+    if (!isTravelPage() || isCurrentlyFlying() || !get('money_reminder_enabled', true)) return;
     if (document.querySelector('#popz-travel-money-notice')) return;
 
     const notice = document.createElement('div');
@@ -279,7 +288,11 @@
     document.body.append(notice);
   }
 
-  showTravelMoneyNotice();
+  function scheduleTravelMoneyNotice() {
+    window.setTimeout(showTravelMoneyNotice, 1000);
+  }
+
+  scheduleTravelMoneyNotice();
 
   // Legacy script installs can still inject their old overlay after this one loads.
   // Keep this page to a single timer instance until that old entry is removed.
@@ -466,7 +479,7 @@
     const subscription = status.subscription;
     const restock = status.restock;
     const flightMinutes = duration();
-    const leave = restock ? new Date(new Date(restock.at).getTime() - flightMinutes * 60000) : null;
+    const leave = restock ? new Date(new Date(restock.at).getTime() - flightMinutes * 60000 + DEPARTURE_BUFFER_SECONDS * 1000) : null;
     const leaveSeconds = leave ? Math.floor((leave.getTime() - Date.now()) / 1000) : 0;
     const leavePending = leave && Date.now() >= leave.getTime() + 60000;
 
@@ -554,8 +567,9 @@
     const currentRoute = `${location.pathname}${location.search}${location.hash}`;
     if (currentRoute !== lastRoute) {
       lastRoute = currentRoute;
-      showTravelMoneyNotice();
+      scheduleTravelMoneyNotice();
     }
+    if (isCurrentlyFlying()) document.querySelector('#popz-travel-money-notice')?.remove();
     const focusedId = document.activeElement?.id;
     if (focusedId !== 'pzMins' && focusedId !== 'pzApiKey') render();
   }, 1000);

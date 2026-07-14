@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.7 - 2026-07-14
+
+- Added a 20-second later-departure buffer.
+- Suppress and dismiss the cash reminder while flying.
+
 ## 1.1.6 - 2026-07-14
 
 - Recognize Torn travel URL variations for the cash reminder.
