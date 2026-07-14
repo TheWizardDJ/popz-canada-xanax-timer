@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         -PopZ- Canada Xanax Flight Timer
 // @namespace    https://popz.world/
-// @version      1.1.3
+// @version      1.1.4
 // @description  Shows the recommended Canada departure time for the latest confirmed Xanax restock.
 // @author       TheWizardDJ
 // @license      Copyright TheWizardDJ
@@ -22,10 +22,16 @@
 (() => {
   'use strict';
 
+  const INSTANCE_KEY = '__popzCanadaXanaxTimerInstance';
+  if (window[INSTANCE_KEY]) return;
+  window[INSTANCE_KEY] = true;
+
+  document.querySelectorAll('#popz-xanax, #popz-flight-alert').forEach(element => element.remove());
+
   const API = 'https://api.popz.world/xanax-timer';
   const GREASY_FORK_SCRIPT_URL = 'https://greasyfork.org/en/scripts/586894-popz-canada-xanax-flight-timer';
   const GREASY_FORK_METADATA_URL = 'https://greasyfork.org/en/scripts/586894.json';
-  const SCRIPT_VERSION = '1.1.3';
+  const SCRIPT_VERSION = '1.1.4';
   const RECIPIENT_ID = '1800878';
   const DEFAULT_FLIGHT_MINUTES = 27;
 
@@ -214,6 +220,17 @@
     <div class="detail"></div>
   `;
   document.body.append(box);
+
+  // Legacy script installs can still inject their old overlay after this one loads.
+  // Keep this page to a single timer instance until that old entry is removed.
+  const duplicateObserver = new MutationObserver(records => {
+    records.forEach(record => record.addedNodes.forEach(node => {
+      if (!(node instanceof Element)) return;
+      if (node.id === 'popz-xanax' && node !== box) node.remove();
+      if (node.id === 'popz-flight-alert' && node !== flightAlert) node.remove();
+    }));
+  });
+  duplicateObserver.observe(document.body, { childList: true, subtree: true });
 
   const storedPosition = get('overlay_position', null);
   if (storedPosition) {

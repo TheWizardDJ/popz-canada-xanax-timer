@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.4 - 2026-07-14
+
+- Prevented duplicate timer overlays from concurrent script installs.
+
 ## 1.1.3 - 2026-07-14
 
 - Matched the travel shortcut control size to the departure-alert bell.
