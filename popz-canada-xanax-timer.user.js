@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         -PopZ- Canada Xanax Flight Timer
 // @namespace    https://popz.world/
-// @version      1.1.5
+// @version      1.1.6
 // @description  Shows the recommended Canada departure time for the latest confirmed Xanax restock.
 // @author       TheWizardDJ
 // @license      Copyright TheWizardDJ
@@ -31,7 +31,7 @@
   const API = 'https://api.popz.world/xanax-timer';
   const GREASY_FORK_SCRIPT_URL = 'https://greasyfork.org/en/scripts/586894-popz-canada-xanax-flight-timer';
   const GREASY_FORK_METADATA_URL = 'https://greasyfork.org/en/scripts/586894.json';
-  const SCRIPT_VERSION = '1.1.5';
+  const SCRIPT_VERSION = '1.1.6';
   const RECIPIENT_ID = '1800878';
   const DEFAULT_FLIGHT_MINUTES = 27;
 
@@ -42,6 +42,7 @@
   let collapsed = false;
   let updateVersion = '';
   let updateCheckInFlight = false;
+  let lastRoute = `${location.pathname}${location.search}${location.hash}`;
 
   const get = (key, fallback) => GM_getValue(key, fallback);
   const set = (key, value) => GM_setValue(key, value);
@@ -129,13 +130,14 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      margin-left: 4px;
-      padding: 1px 4px;
-      min-width: 25px;
-      min-height: 22px;
+      width: 20px;
+      height: 20px;
+      margin-left: 3px;
+      padding: 0;
       font: inherit;
-      font-size: 13px;
+      font-size: 12px;
       line-height: 1;
+      vertical-align: middle;
       background: transparent;
       border: 1px solid #557786;
       border-radius: 4px;
@@ -259,7 +261,14 @@
   document.body.append(box);
 
   function showTravelMoneyNotice() {
-    if (location.pathname !== '/travelagency.php' || !get('money_reminder_enabled', true)) return;
+    const route = `${location.pathname}${location.search}${location.hash}`;
+    const sid = new URLSearchParams(location.search).get('sid')?.toLowerCase();
+    const isTravelPage = /\/(?:travel|travelagency)\.php(?:[/?#]|$)/i.test(route)
+      || sid === 'travel'
+      || sid === 'travelagency'
+      || /(?:[?#&]sid=)(?:travel|travelagency)(?:[&#]|$)/i.test(route);
+    if (!isTravelPage || !get('money_reminder_enabled', true)) return;
+    if (document.querySelector('#popz-travel-money-notice')) return;
 
     const notice = document.createElement('div');
     notice.id = 'popz-travel-money-notice';
@@ -542,6 +551,11 @@
   checkForUpdate();
   setInterval(refresh, 30000);
   setInterval(() => {
+    const currentRoute = `${location.pathname}${location.search}${location.hash}`;
+    if (currentRoute !== lastRoute) {
+      lastRoute = currentRoute;
+      showTravelMoneyNotice();
+    }
     const focusedId = document.activeElement?.id;
     if (focusedId !== 'pzMins' && focusedId !== 'pzApiKey') render();
   }, 1000);

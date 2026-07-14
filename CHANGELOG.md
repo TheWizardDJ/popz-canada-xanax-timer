@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.6 - 2026-07-14
+
+- Recognize Torn travel URL variations for the cash reminder.
+- Compacted the timer controls so all three fit on one line.
+
 ## 1.1.5 - 2026-07-14
 
 - Added a travel-page cash reminder with a persistent toggle.
