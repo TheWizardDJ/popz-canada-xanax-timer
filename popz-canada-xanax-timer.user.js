@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         -PopZ- Canada Xanax Flight Timer
 // @namespace    https://popz.world/
-// @version      1.1.8
+// @version      1.1.9
 // @description  Shows the recommended Canada departure time for the latest confirmed Xanax restock.
 // @author       TheWizardDJ
 // @license      Copyright TheWizardDJ
@@ -31,7 +31,7 @@
   const API = 'https://api.popz.world/xanax-timer';
   const GREASY_FORK_SCRIPT_URL = 'https://greasyfork.org/en/scripts/586894-popz-canada-xanax-flight-timer';
   const GREASY_FORK_METADATA_URL = 'https://greasyfork.org/en/scripts/586894.json';
-  const SCRIPT_VERSION = '1.1.8';
+  const SCRIPT_VERSION = '1.1.9';
   const RECIPIENT_ID = '1800878';
   const DEFAULT_FLIGHT_MINUTES = 27;
   const DEPARTURE_BUFFER_SECONDS = 20;
@@ -97,6 +97,10 @@
     #popz-xanax.leave-ready { border-color: #22c55e; }
     #popz-xanax.leave-warning { border-color: #f59e0b; }
     #popz-xanax.leave-urgent { border-color: #ef4444; }
+    #popz-xanax.leave-idle #pzCollapse { border-color: #68737a !important; }
+    #popz-xanax.leave-ready #pzCollapse { border-color: #22c55e !important; }
+    #popz-xanax.leave-warning #pzCollapse { border-color: #f59e0b !important; }
+    #popz-xanax.leave-urgent #pzCollapse { border-color: #ef4444 !important; }
     #popz-xanax button {
       background: #287ca0;
       color: #fff;

@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.9 - 2026-07-14
+
+- Apply the leave-time border color to the collapsed timer drawer.
+
 ## 1.1.8 - 2026-07-14
 
 - Color the timer border by current leave-time urgency.
