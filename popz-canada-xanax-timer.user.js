@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         -PopZ- Canada Xanax Flight Timer
 // @namespace    https://popz.world/
-// @version      1.1.7
+// @version      1.1.8
 // @description  Shows the recommended Canada departure time for the latest confirmed Xanax restock.
 // @author       TheWizardDJ
 // @license      Copyright TheWizardDJ
@@ -31,7 +31,7 @@
   const API = 'https://api.popz.world/xanax-timer';
   const GREASY_FORK_SCRIPT_URL = 'https://greasyfork.org/en/scripts/586894-popz-canada-xanax-flight-timer';
   const GREASY_FORK_METADATA_URL = 'https://greasyfork.org/en/scripts/586894.json';
-  const SCRIPT_VERSION = '1.1.7';
+  const SCRIPT_VERSION = '1.1.8';
   const RECIPIENT_ID = '1800878';
   const DEFAULT_FLIGHT_MINUTES = 27;
   const DEPARTURE_BUFFER_SECONDS = 20;
@@ -85,16 +85,18 @@
       width: 210px;
       background: #152028;
       color: #edf6fb;
-      border: 1px solid #4d7183;
+      border: 1px solid #68737a;
       border-radius: 7px;
       box-shadow: 0 6px 20px #0008;
       font: 12px Arial, sans-serif;
       user-select: none;
       transition: left .18s ease;
     }
-    #popz-xanax.warn { border-color: #f59e0b; }
-    #popz-xanax.urgent { border-color: #ef4444; }
     #popz-xanax.off { opacity: .72; border-color: #68737a; }
+    #popz-xanax.leave-idle { border-color: #68737a; }
+    #popz-xanax.leave-ready { border-color: #22c55e; }
+    #popz-xanax.leave-warning { border-color: #f59e0b; }
+    #popz-xanax.leave-urgent { border-color: #ef4444; }
     #popz-xanax button {
       background: #287ca0;
       color: #fff;
@@ -485,16 +487,15 @@
 
     flightAlert.classList.toggle('active', Boolean(subscription.active && flightAlertEnabled && leaveSeconds > 0 && leaveSeconds <= 60));
 
-    const state = !subscription.active
-      ? 'off'
-      : subscription.owner_access
-        ? ''
-        : subscription.remaining_seconds <= 3600
-          ? 'urgent'
-          : subscription.remaining_seconds <= 86400
-            ? 'warn'
-            : '';
-    box.className = `${state}${detailOpen ? ' open' : ''}${get('overlay_edge', 'left') === 'right' ? ' edge-right' : ''}`;
+    const subscriptionState = !subscription.active ? 'off' : '';
+    const leaveState = !leave || leavePending
+      ? 'leave-idle'
+      : leaveSeconds > 300
+        ? 'leave-ready'
+        : leaveSeconds > 60
+          ? 'leave-warning'
+          : 'leave-urgent';
+    box.className = `${subscriptionState} ${leaveState}${detailOpen ? ' open' : ''}${get('overlay_edge', 'left') === 'right' ? ' edge-right' : ''}`;
 
     body.innerHTML = `
       <strong>${subscription.owner_access ? 'Owner access' : subscription.active ? 'Active' : 'Inactive'}</strong><br>

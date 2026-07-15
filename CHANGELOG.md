@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.8 - 2026-07-14
+
+- Color the timer border by current leave-time urgency.
+
 ## 1.1.7 - 2026-07-14
 
 - Added a 20-second later-departure buffer.
