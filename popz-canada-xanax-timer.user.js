@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         -PopZ- Canada Xanax Flight Timer
 // @namespace    https://popz.world/
-// @version      1.1.10
+// @version      1.1.11
 // @description  Shows the recommended Canada departure time for the latest confirmed Xanax restock.
 // @author       TheWizardDJ
 // @license      Copyright TheWizardDJ
@@ -31,7 +31,7 @@
   const API = 'https://api.popz.world/xanax-timer';
   const GREASY_FORK_SCRIPT_URL = 'https://greasyfork.org/en/scripts/586894-popz-canada-xanax-flight-timer';
   const GREASY_FORK_METADATA_URL = 'https://greasyfork.org/en/scripts/586894.json';
-  const SCRIPT_VERSION = '1.1.10';
+  const SCRIPT_VERSION = '1.1.11';
   const RECIPIENT_ID = '1800878';
   const DEFAULT_FLIGHT_MINUTES = 27;
   const DEPARTURE_BUFFER_SECONDS = 20;
@@ -281,8 +281,13 @@
     return /remaining flight time|you are currently (?:flying|traveling)|currently (?:flying|traveling)/i.test(pageText);
   }
 
+  function isTornCityDepartureSelector() {
+    const pageText = document.body?.innerText || '';
+    return /travel destinations|please choose a destination/i.test(pageText);
+  }
+
   function showTravelMoneyNotice() {
-    if (!isTravelPage() || isCurrentlyFlying() || !get('money_reminder_enabled', true)) return;
+    if (!isTravelPage() || isCurrentlyFlying() || !isTornCityDepartureSelector() || !get('money_reminder_enabled', true)) return;
     if (document.querySelector('#popz-travel-money-notice')) return;
 
     const notice = document.createElement('div');

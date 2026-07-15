@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.11 - 2026-07-15
+
+- Show the cash reminder only on Torn City's departure destination selector.
+
 ## 1.1.10 - 2026-07-15
 
 - Clamp saved overlay coordinates so expanding the drawer cannot restore it off-screen.
