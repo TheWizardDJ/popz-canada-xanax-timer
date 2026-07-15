@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.1.10 - 2026-07-15
+
+- Clamp saved overlay coordinates so expanding the drawer cannot restore it off-screen.
+
 ## 1.1.9 - 2026-07-14
 
 - Apply the leave-time border color to the collapsed timer drawer.

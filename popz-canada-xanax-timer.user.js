@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         -PopZ- Canada Xanax Flight Timer
 // @namespace    https://popz.world/
-// @version      1.1.9
+// @version      1.1.10
 // @description  Shows the recommended Canada departure time for the latest confirmed Xanax restock.
 // @author       TheWizardDJ
 // @license      Copyright TheWizardDJ
@@ -31,7 +31,7 @@
   const API = 'https://api.popz.world/xanax-timer';
   const GREASY_FORK_SCRIPT_URL = 'https://greasyfork.org/en/scripts/586894-popz-canada-xanax-flight-timer';
   const GREASY_FORK_METADATA_URL = 'https://greasyfork.org/en/scripts/586894.json';
-  const SCRIPT_VERSION = '1.1.9';
+  const SCRIPT_VERSION = '1.1.10';
   const RECIPIENT_ID = '1800878';
   const DEFAULT_FLIGHT_MINUTES = 27;
   const DEPARTURE_BUFFER_SECONDS = 20;
@@ -317,9 +317,20 @@
     box.style.top = `${storedPosition.top}px`;
   }
 
+  function clampOverlayPosition(position = {}) {
+    const left = Number(position.left);
+    const top = Number(position.top);
+    const maxLeft = Math.max(0, window.innerWidth - box.offsetWidth);
+    const maxTop = Math.max(0, window.innerHeight - box.offsetHeight);
+    return {
+      left: Math.max(0, Math.min(maxLeft, Number.isFinite(left) ? left : 16)),
+      top: Math.max(0, Math.min(maxTop, Number.isFinite(top) ? top : 80))
+    };
+  }
+
   function applyCollapsedState() {
     const edge = get('overlay_edge', 'left');
-    const position = get('overlay_position', { left: 16, top: 80 });
+    const position = clampOverlayPosition(get('overlay_position', { left: 16, top: 80 }));
     const button = document.querySelector('#pzCollapse');
 
     box.classList.toggle('edge-right', edge === 'right');
@@ -329,6 +340,7 @@
     } else {
       box.style.left = `${position.left}px`;
       box.style.top = `${position.top}px`;
+      set('overlay_position', position);
     }
 
     button.innerHTML = collapsed ? (edge === 'right' ? '&laquo;' : '&raquo;') : (edge === 'right' ? '&raquo;' : '&laquo;');
